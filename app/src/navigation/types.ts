@@ -8,6 +8,7 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Main: NavigatorScreenParams<BottomTabParamList>;
   Settings: undefined;
+  Updates: undefined;
   NotFound: undefined;
   Playground: undefined;
 };

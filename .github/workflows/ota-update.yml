@@ -1,4 +1,4 @@
-name: OTA Update Pipeline (OtaKit)
+name: Build Release APK & Deploy OTA Update
 
 on:
   push:
@@ -7,16 +7,27 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  validate-and-ota-update:
-    name: Verify Code & Deploy OTA Update
+  build-and-deploy:
+    name: Build Release APK & OTA Kit Update
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -31,7 +42,26 @@ jobs:
           npm run typecheck --workspace=@mylifeos/server
           npm run typecheck --workspace=@mylifeos/app
 
-      - name: Prepare React Native Bundle
+      - name: Make Gradle executable
+        run: chmod +x app/android/gradlew
+
+      - name: Build Android Release APK
+        run: ./gradlew assembleRelease --no-daemon
+        working-directory: app/android
+
+      - name: Prepare APK Release Artifacts
+        run: |
+          mkdir -p release-output
+          cp app/android/app/build/outputs/apk/release/app-release.apk release-output/MyLifeOS-release.apk
+          ls -la release-output/
+
+      - name: Upload APK Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyLifeOS-release-apk
+          path: release-output/MyLifeOS-release.apk
+
+      - name: Prepare React Native Bundle for OTA
         run: |
           mkdir -p build/bundle
           npx react-native bundle \
@@ -44,11 +74,32 @@ jobs:
 
       - name: Publish OTA Update via OtaKit
         env:
-          OTAKIT_API_KEY: ${{ secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
-          OTAKIT_TOKEN: ${{ secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
+          OTA_TOKEN: ${{ secrets.OTA_TOKEN || secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
+          OTAKIT_API_KEY: ${{ secrets.OTA_TOKEN || secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
+          OTAKIT_TOKEN: ${{ secrets.OTA_TOKEN || secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
         run: |
-          if [ -z "$OTAKIT_API_KEY" ]; then
-            echo "Error: OTAKIT_API_KEY or OTAKIT_API secret is not set in GitHub repository secrets."
+          TOKEN="${OTA_TOKEN:-$OTAKIT_API_KEY}"
+          if [ -z "$TOKEN" ]; then
+            echo "Error: Neither OTA_TOKEN, OTAKIT_API_KEY nor OTAKIT_API is configured in GitHub repository secrets."
             exit 1
           fi
           npx -y @otakit/cli@latest upload app/build/bundle --release --strategy zip
+
+      - name: Create or Update GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: latest
+          name: "MyLifeOS Latest Release"
+          body: |
+            ## MyLifeOS Base Release
+            
+            - **Install APK**: Download `MyLifeOS-release.apk` below to install the base application on your Android device.
+            - **Continuous OTA Updates**: Once installed, all future commits to `main` automatically deliver live code and UI updates to your app via **OtaKit**.
+            - **Build Commit**: `${{ github.sha }}`
+          draft: false
+          prerelease: false
+          files: |
+            release-output/MyLifeOS-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

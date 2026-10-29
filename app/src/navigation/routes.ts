@@ -8,6 +8,7 @@ export const Routes = {
   Onboarding: "Onboarding",
   Main: "Main",
   Settings: "Settings",
+  Updates: "Updates",
   NotFound: "NotFound",
   Playground: "Playground",
 

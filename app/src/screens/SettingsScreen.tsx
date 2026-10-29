@@ -456,6 +456,16 @@ const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <Divider />
 
             <SettingRow
+              icon="cloud-download-outline"
+              title="App Updates & OTA Kit"
+              subtitle="Live over-the-air updates & release info"
+              right={<Icon name="chevron-forward" size={16} color={theme.colors.accent} />}
+              onPress={() => navigation.navigate(Routes.Updates)}
+            />
+
+            <Divider />
+
+            <SettingRow
               icon="document-text-outline"
               title="Privacy Policy & Manifesto"
               subtitle="Zero analytics, telemetry, or remote trackers"

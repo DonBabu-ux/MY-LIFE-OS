@@ -6,6 +6,7 @@ import { BottomTabs } from "./BottomTabs";
 import LockScreen from "../screens/LockScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import UpdatesScreen from "../screens/UpdatesScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import PlaygroundScreen from "../screens/PlaygroundScreen";
 
@@ -25,6 +26,11 @@ export const RootNavigator: React.FC = () => {
       <Stack.Screen
         name={Routes.Settings}
         component={SettingsScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name={Routes.Updates}
+        component={UpdatesScreen}
         options={{ animation: "slide_from_right" }}
       />
       <Stack.Screen name={Routes.NotFound} component={NotFoundScreen} />
