@@ -3,14 +3,8 @@
  * Batch 7.5
  */
 
-import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolate,
-} from "react-native-reanimated";
+import React, { useRef } from "react";
+import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { useTheme } from "@design";
 import { Text } from "../../../components";
 import { MOODS, type MoodLevel } from "../mock";
@@ -35,16 +29,13 @@ const MoodButton: React.FC<{
   onPress: () => void;
 }> = ({ emoji, label, color, selected, size, emojiSize, onPress }) => {
   const theme = useTheme();
-  const scale = useSharedValue(1);
-
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const scale = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
-    scale.value = withSpring(1.2, { damping: 6, stiffness: 200 }, () => {
-      scale.value = withSpring(1, { damping: 10 });
-    });
+    Animated.sequence([
+      Animated.spring(scale, { toValue: 1.25, friction: 3, tension: 150, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 5, tension: 150, useNativeDriver: true }),
+    ]).start();
     onPress();
   };
 
@@ -52,7 +43,7 @@ const MoodButton: React.FC<{
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress} style={styles.moodBtn}>
       <Animated.View
         style={[
-          animStyle,
+          { transform: [{ scale }] },
           styles.emojiWrap,
           {
             width: size,
@@ -76,27 +67,23 @@ const MoodButton: React.FC<{
   );
 };
 
-export const MoodPicker: React.FC<MoodPickerProps> = ({
-  value,
-  onChange,
-  size = "md",
-}) => {
+export const MoodPicker: React.FC<MoodPickerProps> = ({ value, onChange, size = "md" }) => {
   const btnSize = SIZE_MAP[size];
   const emojiSize = EMOJI_SIZE[size];
 
   return (
-    <View style={styles.row}>
-      {MOODS.map((mood) => (
+    <View style={styles.container}>
+      {MOODS.map((m) => (
         <MoodButton
-          key={mood.level}
-          level={mood.level}
-          emoji={mood.emoji}
-          label={mood.label}
-          color={mood.color}
-          selected={value === mood.level}
+          key={m.level}
+          level={m.level}
+          emoji={m.emoji}
+          label={m.label}
+          color={m.color}
+          selected={value === m.level}
           size={btnSize}
           emojiSize={emojiSize}
-          onPress={() => onChange(mood.level)}
+          onPress={() => onChange(m.level)}
         />
       ))}
     </View>
@@ -104,24 +91,24 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
 };
 
 const styles = StyleSheet.create({
-  row: {
+  container: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    gap: 6,
+    alignItems: "center",
+    paddingVertical: 8,
   },
   moodBtn: {
-    flex: 1,
     alignItems: "center",
-    gap: 6,
+    gap: 4,
   },
   emojiWrap: {
     alignItems: "center",
     justifyContent: "center",
   },
   moodLabel: {
-    fontSize: 10,
     textAlign: "center",
+    fontSize: 10,
+    fontWeight: "600",
   },
 });
 

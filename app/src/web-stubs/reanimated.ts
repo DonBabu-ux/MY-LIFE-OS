@@ -1,6 +1,6 @@
 // Web stub for react-native-reanimated
 import React from 'react';
-import { View, ScrollView, FlatList, Animated } from 'react-native';
+import { View, ScrollView, FlatList } from 'react-native';
 
 export const useSharedValue = (init: any) => ({ value: init });
 export const useAnimatedStyle = (fn: () => any) => fn();
@@ -23,7 +23,22 @@ export const interpolate = (value: number, input: number[], output: number[]) =>
   return output[0] + ratio * (output[output.length - 1] - output[0]);
 };
 export const Extrapolation = { CLAMP: 'clamp', IDENTITY: 'identity', EXTEND: 'extend' };
-export const Easing = { linear: (t: number) => t, ease: (t: number) => t, bezier: () => (t: number) => t };
+
+const identity = (t: number) => t;
+export const Easing = {
+  linear: identity,
+  ease: identity,
+  bezier: () => identity,
+  out: (fn: any) => fn || identity,
+  in: (fn: any) => fn || identity,
+  inOut: (fn: any) => fn || identity,
+  poly: () => identity,
+  quad: identity,
+  cubic: identity,
+  exp: identity,
+  circle: identity,
+};
+
 export const FadeIn = {};
 export const FadeOut = {};
 export const SlideInRight = {};

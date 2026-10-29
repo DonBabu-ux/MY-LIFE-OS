@@ -48,6 +48,8 @@ export const Routes = {
   Upcoming: "Upcoming",
 
   // More stack
+  MoreHub: "MoreHub",
+  Permissions: "Permissions",
   UsageDashboard: "UsageDashboard",
   AppDetail: "AppDetail",
   FocusRules: "FocusRules",

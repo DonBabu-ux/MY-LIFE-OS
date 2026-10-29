@@ -1,4 +1,4 @@
-﻿module.exports = {
+module.exports = {
   presets: ["module:@react-native/babel-preset"],
   plugins: [
     [
@@ -24,8 +24,6 @@
           "@navigation": "./src/navigation"
         }
       }
-    ],
-    "react-native-reanimated/plugin"
+    ]
   ]
 };
-

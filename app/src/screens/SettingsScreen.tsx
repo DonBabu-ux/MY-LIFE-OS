@@ -34,6 +34,7 @@ import {
 } from "../components";
 import { useSettingsStore, type SyncCategorySettings } from "../state/settingsStore";
 import { Routes } from "../navigation/routes";
+import { PermissionsModal } from "../permissions";
 
 const SettingRow: React.FC<{
   icon: string;
@@ -103,9 +104,14 @@ const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const setReducedMotion = useSettingsStore((s) => s.setReducedMotion);
   const syncCategories = useSettingsStore((s) => s.syncCategories);
   const toggleSyncCategory = useSettingsStore((s) => s.toggleSyncCategory);
+  const permissions = useSettingsStore((s) => s.permissions);
+  const togglePermission = useSettingsStore((s) => s.togglePermission);
   const lastBackupTime = useSettingsStore((s) => s.lastBackupTime);
   const exportBackupJson = useSettingsStore((s) => s.exportBackupJson);
   const clearAllLocalData = useSettingsStore((s) => s.clearAllLocalData);
+
+  // Permissions modal state
+  const [permissionsModalVisible, setPermissionsModalVisible] = useState(false);
 
   // Change PIN modal state
   const [changePinVisible, setChangePinVisible] = useState(false);
@@ -167,7 +173,13 @@ const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         title="Settings"
         subtitle="System & Preferences"
         showBack
-        onBack={() => navigation.goBack()}
+        onBack={() => {
+          if (navigation.canGoBack?.()) {
+            navigation.goBack();
+          } else {
+            navigation.navigate(Routes.Main);
+          }
+        }}
       />
 
       <ScrollView
@@ -254,6 +266,103 @@ const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               subtitle="Returns immediately to PIN screen"
               right={<Icon name="log-out-outline" size={18} color={theme.colors.accent} />}
               onPress={() => navigation.replace(Routes.Lock)}
+            />
+          </Card>
+        </View>
+
+        {/* 2. Permissions & Privacy Center Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionTitleRow}>
+            <Text variant="captionStrong" color="textMuted">
+              PERMISSIONS & PRIVACY CENTER
+            </Text>
+            <TouchableOpacity
+              onPress={() => setPermissionsModalVisible(true)}
+              hitSlop={{ top: 6, bottom: 6, left: 8, right: 8 }}
+            >
+              <Text variant="captionStrong" style={{ color: theme.colors.accent }}>
+                Manage All ›
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Card style={styles.card}>
+            <SettingRow
+              icon="notifications-outline"
+              title="Notifications & Reminders"
+              subtitle={permissions.notifications ? "Allowed for alerts" : "Disabled"}
+              right={
+                <Switch
+                  value={permissions.notifications}
+                  onValueChange={() => togglePermission("notifications")}
+                  trackColor={{ false: theme.colors.surfaceAlt, true: theme.colors.accent }}
+                  thumbColor="#FFF"
+                />
+              }
+            />
+
+            <Divider />
+
+            <SettingRow
+              icon="camera-outline"
+              title="Camera & Receipt OCR"
+              subtitle={permissions.camera ? "Allowed for offline scanning" : "Disabled"}
+              right={
+                <Switch
+                  value={permissions.camera}
+                  onValueChange={() => togglePermission("camera")}
+                  trackColor={{ false: theme.colors.surfaceAlt, true: theme.colors.accent }}
+                  thumbColor="#FFF"
+                />
+              }
+            />
+
+            <Divider />
+
+            <SettingRow
+              icon="location-outline"
+              title="Fitness & Location"
+              subtitle={permissions.location ? "Allowed for offline routes" : "Disabled"}
+              right={
+                <Switch
+                  value={permissions.location}
+                  onValueChange={() => togglePermission("location")}
+                  trackColor={{ false: theme.colors.surfaceAlt, true: theme.colors.accent }}
+                  thumbColor="#FFF"
+                />
+              }
+            />
+
+            <Divider />
+
+            <SettingRow
+              icon="people-outline"
+              title="Sovereign Contacts"
+              subtitle={permissions.contacts ? "Allowed for local backup" : "Disabled"}
+              right={
+                <Switch
+                  value={permissions.contacts}
+                  onValueChange={() => togglePermission("contacts")}
+                  trackColor={{ false: theme.colors.surfaceAlt, true: theme.colors.accent }}
+                  thumbColor="#FFF"
+                />
+              }
+            />
+
+            <Divider />
+
+            <SettingRow
+              icon="hourglass-outline"
+              title="Screen Time & Usage Stats"
+              subtitle={permissions.usage ? "Allowed for app limits" : "Disabled"}
+              right={
+                <Switch
+                  value={permissions.usage}
+                  onValueChange={() => togglePermission("usage")}
+                  trackColor={{ false: theme.colors.surfaceAlt, true: theme.colors.accent }}
+                  thumbColor="#FFF"
+                />
+              }
             />
           </Card>
         </View>
@@ -517,6 +626,12 @@ const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           />
         </View>
       </Sheet>
+
+      {/* Permissions Modal */}
+      <PermissionsModal
+        visible={permissionsModalVisible}
+        onClose={() => setPermissionsModalVisible(false)}
+      />
     </Screen>
   );
 };

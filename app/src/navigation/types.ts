@@ -54,6 +54,8 @@ export type PlanStackParamList = {
 };
 
 export type MoreStackParamList = {
+  MoreHub: undefined;
+  Permissions: undefined;
   UsageDashboard: undefined;
   AppDetail: { appId: string };
   FocusRules: undefined;

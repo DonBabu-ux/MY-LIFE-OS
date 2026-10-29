@@ -1,30 +1,40 @@
-// Web stub for react-native-svg
-// All SVG shape components are no-ops on web (charts degrade gracefully)
-const noop = () => null;
+import React from "react";
 
-export const Svg = noop;
-export const Circle = noop;
-export const Ellipse = noop;
-export const G = noop;
-export const Text = noop;
-export const TSpan = noop;
-export const TextPath = noop;
-export const Path = noop;
-export const Polygon = noop;
-export const Polyline = noop;
-export const Line = noop;
-export const Rect = noop;
-export const Use = noop;
-export const Image = noop;
-export const Symbol = noop;
-export const Defs = noop;
-export const LinearGradient = noop;
-export const RadialGradient = noop;
-export const Stop = noop;
-export const ClipPath = noop;
-export const Pattern = noop;
-export const Mask = noop;
-export const Marker = noop;
-export const ForeignObject = noop;
+// Web implementation of react-native-svg using native HTML/DOM SVG elements
+const createSvgComponent = (tag: string) => {
+  return React.forwardRef<any, any>(({ style, ...props }, ref) => {
+    // Convert style object if needed
+    return React.createElement(tag, {
+      ref,
+      ...props,
+      style: { ...(props.style || {}), ...(style || {}) },
+    });
+  });
+};
+
+export const Svg = createSvgComponent("svg");
+export const Circle = createSvgComponent("circle");
+export const Ellipse = createSvgComponent("ellipse");
+export const G = createSvgComponent("g");
+export const Text = createSvgComponent("text");
+export const TSpan = createSvgComponent("tspan");
+export const TextPath = createSvgComponent("textPath");
+export const Path = createSvgComponent("path");
+export const Polygon = createSvgComponent("polygon");
+export const Polyline = createSvgComponent("polyline");
+export const Line = createSvgComponent("line");
+export const Rect = createSvgComponent("rect");
+export const Use = createSvgComponent("use");
+export const Image = createSvgComponent("image");
+export const Symbol = createSvgComponent("symbol");
+export const Defs = createSvgComponent("defs");
+export const LinearGradient = createSvgComponent("linearGradient");
+export const RadialGradient = createSvgComponent("radialGradient");
+export const Stop = createSvgComponent("stop");
+export const ClipPath = createSvgComponent("clipPath");
+export const Pattern = createSvgComponent("pattern");
+export const Mask = createSvgComponent("mask");
+export const Marker = createSvgComponent("marker");
+export const ForeignObject = createSvgComponent("foreignObject");
 
 export default Svg;

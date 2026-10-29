@@ -19,6 +19,9 @@ export interface PermissionSettings {
   location: boolean;
   camera: boolean;
   notifications: boolean;
+  contacts: boolean;
+  usage: boolean;
+  biometrics: boolean;
 }
 
 interface SettingsState {
@@ -30,6 +33,7 @@ interface SettingsState {
   reducedMotion: boolean;
   syncCategories: SyncCategorySettings;
   permissions: PermissionSettings;
+  hasPromptedPermissions: boolean;
   lastBackupTime: string;
 
   // Actions
@@ -41,6 +45,9 @@ interface SettingsState {
   setReducedMotion: (reduced: boolean) => void;
   toggleSyncCategory: (category: keyof SyncCategorySettings) => void;
   togglePermission: (perm: keyof PermissionSettings) => void;
+  setPermission: (perm: keyof PermissionSettings, granted: boolean) => void;
+  grantAllPermissions: () => void;
+  setHasPromptedPermissions: (prompted: boolean) => void;
   exportBackupJson: () => string;
   clearAllLocalData: () => void;
 }
@@ -61,11 +68,15 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     contacts: false,
   },
   permissions: {
-    sms: true,
-    location: true,
-    camera: true,
-    notifications: true,
+    sms: false,
+    location: false,
+    camera: false,
+    notifications: false,
+    contacts: false,
+    usage: false,
+    biometrics: true,
   },
+  hasPromptedPermissions: false,
   lastBackupTime: "Yesterday at 11:30 PM",
 
   completeOnboarding: (newPin) => {
@@ -111,6 +122,34 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         [perm]: !state.permissions[perm],
       },
     }));
+  },
+
+  setPermission: (perm, granted) => {
+    set((state) => ({
+      permissions: {
+        ...state.permissions,
+        [perm]: granted,
+      },
+    }));
+  },
+
+  grantAllPermissions: () => {
+    set({
+      permissions: {
+        sms: true,
+        location: true,
+        camera: true,
+        notifications: true,
+        contacts: true,
+        usage: true,
+        biometrics: true,
+      },
+      hasPromptedPermissions: true,
+    });
+  },
+
+  setHasPromptedPermissions: (prompted) => {
+    set({ hasPromptedPermissions: prompted });
   },
 
   exportBackupJson: () => {
