@@ -9,6 +9,8 @@
     "shared"
   ],
   "scripts": {
+    "dev": "npm run app:start",
+    "start": "npm run app:start",
     "app:android": "npm run android --workspace=@mylifeos/app",
     "app:start": "npm run start --workspace=@mylifeos/app",
     "app:test": "npm run test --workspace=@mylifeos/app",
