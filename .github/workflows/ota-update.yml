@@ -72,7 +72,31 @@ jobs:
             --assets-dest build/bundle
         working-directory: app
 
-      - name: Publish OTA Update via OtaKit
+      - name: Create Initial or Updated GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v0.1.0-release
+          name: "MyLifeOS v0.1.0 (Initial Release APK)"
+          body: |
+            ## MyLifeOS Base Release APK
+            
+            This is the **initial installable APK** for MyLifeOS.
+            
+            ### Instructions:
+            1. Download `MyLifeOS-release.apk` below and install it on your Android phone.
+            2. Open the app to complete setup.
+            3. All future updates will be delivered **automatically over the air via OTA Kit** without reinstalling the APK.
+            
+            **Commit**: `${{ github.sha }}`
+          draft: false
+          prerelease: false
+          files: |
+            release-output/MyLifeOS-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Live OTA Update via OtaKit
         env:
           OTA_TOKEN: ${{ secrets.OTA_TOKEN || secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
           OTAKIT_API_KEY: ${{ secrets.OTA_TOKEN || secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
@@ -80,26 +104,7 @@ jobs:
         run: |
           TOKEN="${OTA_TOKEN:-$OTAKIT_API_KEY}"
           if [ -z "$TOKEN" ]; then
-            echo "Error: Neither OTA_TOKEN, OTAKIT_API_KEY nor OTAKIT_API is configured in GitHub repository secrets."
-            exit 1
+            echo "::warning ::Neither OTA_TOKEN, OTAKIT_API_KEY nor OTAKIT_API is configured in repository secrets. Skipping live OTA dispatch until token is added."
+            exit 0
           fi
           npx -y @otakit/cli@latest upload app/build/bundle --release --strategy zip
-
-      - name: Create or Update GitHub Release with APK
-        uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
-        with:
-          tag_name: latest
-          name: "MyLifeOS Latest Release"
-          body: |
-            ## MyLifeOS Base Release
-            
-            - **Install APK**: Download `MyLifeOS-release.apk` below to install the base application on your Android device.
-            - **Continuous OTA Updates**: Once installed, all future commits to `main` automatically deliver live code and UI updates to your app via **OtaKit**.
-            - **Build Commit**: `${{ github.sha }}`
-          draft: false
-          prerelease: false
-          files: |
-            release-output/MyLifeOS-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
