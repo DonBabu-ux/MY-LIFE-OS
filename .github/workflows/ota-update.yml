@@ -46,7 +46,7 @@ jobs:
         run: chmod +x app/android/gradlew
 
       - name: Build Android Release APK
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew assembleRelease -PnewArchEnabled=false --no-daemon
         working-directory: app/android
 
       - name: Prepare APK Release Artifacts
