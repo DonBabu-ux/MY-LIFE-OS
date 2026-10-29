@@ -1,0 +1,52 @@
+# Node
+node_modules/
+*.log
+npm-debug.log*
+yarn-error.log
+.pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# React Native / Metro
+.metro-health-check*
+app/android/.gradle/
+app/android/app/build/
+app/android/build/
+app/ios/Pods/
+*.hprof
+
+# Native build
+*.keystore
+*.jks
+app/android/app/release/
+app/android/app/debug/
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing / coverage
+coverage/
+.nyc_output/
+
+# Build output
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temp
+*.tmp
+*.bak

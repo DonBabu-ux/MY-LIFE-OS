@@ -1,0 +1,27 @@
+{
+  "name": "mylifeos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MyLifeOS — offline-first, privacy-first personal control center for Android",
+  "workspaces": [
+    "app",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "app:android": "npm run android --workspace=@mylifeos/app",
+    "app:start": "npm run start --workspace=@mylifeos/app",
+    "app:test": "npm run test --workspace=@mylifeos/app",
+    "app:lint": "npm run lint --workspace=@mylifeos/app",
+    "app:typecheck": "npm run typecheck --workspace=@mylifeos/app",
+    "server:dev": "npm run dev --workspace=@mylifeos/server",
+    "server:build": "npm run build --workspace=@mylifeos/server",
+    "clean": "rimraf node_modules app/node_modules server/node_modules shared/node_modules",
+    "postinstall": "echo 'Workspaces linked.'"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "",
+  "license": "UNLICENSED"
+}

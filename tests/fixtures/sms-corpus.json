@@ -1,0 +1,53 @@
+[
+  {
+    "id": "sms-001",
+    "sender": "MPESA",
+    "raw": "QK38DF92LK Confirmed. Ksh1,500.00 sent to JANE DOE 0712345678 on 24/5/26 at 2:30 PM. New M-PESA balance is Ksh14,250.00. Transaction cost, Ksh15.00.",
+    "expected": {
+      "type": "transfer",
+      "amount_minor": 150000,
+      "currency": "KES",
+      "merchant": "JANE DOE",
+      "reference": "QK38DF92LK",
+      "occurred_at": "2026-05-24T14:30:00Z"
+    }
+  },
+  {
+    "id": "sms-002",
+    "sender": "MPESA",
+    "raw": "QK39AA11ZZ Confirmed. Ksh4,200.00 paid to QUICKMART SUPERMARKET. on 24/5/26 at 6:15 PM. New M-PESA balance is Ksh10,035.00.",
+    "expected": {
+      "type": "expense",
+      "amount_minor": 420000,
+      "currency": "KES",
+      "merchant": "QUICKMART SUPERMARKET",
+      "reference": "QK39AA11ZZ",
+      "occurred_at": "2026-05-24T18:15:00Z"
+    }
+  },
+  {
+    "id": "sms-003",
+    "sender": "MPESA",
+    "raw": "QK40BB22YY Confirmed. You have received Ksh25,000.00 from ACME CONSULTING on 25/5/26 at 9:00 AM. New M-PESA balance is Ksh35,035.00.",
+    "expected": {
+      "type": "income",
+      "amount_minor": 2500000,
+      "currency": "KES",
+      "merchant": "ACME CONSULTING",
+      "reference": "QK40BB22YY",
+      "occurred_at": "2026-05-25T09:00:00Z"
+    }
+  },
+  {
+    "id": "sms-004",
+    "sender": "EQUITY",
+    "raw": "Your A/C 1234567890 has been debited by KES 2,500.00 on 25-MAY-2026 11:20:10 for ATM Withdrawal. Available Bal: KES 85,400.00.",
+    "expected": {
+      "type": "withdrawal",
+      "amount_minor": 250000,
+      "currency": "KES",
+      "merchant": "ATM Withdrawal",
+      "occurred_at": "2026-05-25T11:20:10Z"
+    }
+  }
+]

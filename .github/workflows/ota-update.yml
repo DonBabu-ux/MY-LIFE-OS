@@ -1,0 +1,54 @@
+name: OTA Update Pipeline (OtaKit)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  validate-and-ota-update:
+    name: Verify Code & Deploy OTA Update
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Workspace Typechecks
+        run: |
+          npm run typecheck --workspace=@mylifeos/shared
+          npm run typecheck --workspace=@mylifeos/server
+          npm run typecheck --workspace=@mylifeos/app
+
+      - name: Prepare React Native Bundle
+        run: |
+          mkdir -p build/bundle
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output build/bundle/index.android.bundle \
+            --assets-dest build/bundle
+        working-directory: app
+
+      - name: Publish OTA Update via OtaKit
+        env:
+          OTAKIT_API_KEY: ${{ secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
+          OTAKIT_TOKEN: ${{ secrets.OTAKIT_API_KEY || secrets.OTAKIT_API }}
+        run: |
+          if [ -z "$OTAKIT_API_KEY" ]; then
+            echo "Error: OTAKIT_API_KEY or OTAKIT_API secret is not set in GitHub repository secrets."
+            exit 1
+          fi
+          npx -y @otakit/cli@latest upload app/build/bundle --release --strategy zip

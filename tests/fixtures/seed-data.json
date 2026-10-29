@@ -1,0 +1,54 @@
+{
+  "categories": [
+    { "id": "cat-001", "name": "Food & Dining", "kind": "expense", "icon": "restaurant", "color": "#FF7043", "is_system": true, "sort_order": 1 },
+    { "id": "cat-002", "name": "Groceries", "kind": "expense", "icon": "cart", "color": "#4CAF50", "is_system": true, "sort_order": 2 },
+    { "id": "cat-003", "name": "Transport", "kind": "expense", "icon": "car", "color": "#29B6F6", "is_system": true, "sort_order": 3 },
+    { "id": "cat-004", "name": "Utilities", "kind": "expense", "icon": "flash", "color": "#FFA726", "is_system": true, "sort_order": 4 },
+    { "id": "cat-005", "name": "Salary", "kind": "income", "icon": "cash", "color": "#66BB6A", "is_system": true, "sort_order": 5 },
+    { "id": "cat-006", "name": "Investment", "kind": "income", "icon": "trending-up", "color": "#AB47BC", "is_system": true, "sort_order": 6 }
+  ],
+  "transactions": [
+    {
+      "id": "tx-001",
+      "type": "expense",
+      "amount_minor": 35000,
+      "currency": "KES",
+      "occurred_at": "2026-05-20T12:00:00Z",
+      "merchant": "Java House",
+      "description": "Lunch meeting",
+      "category_id": "cat-001",
+      "source": "manual"
+    },
+    {
+      "id": "tx-002",
+      "type": "income",
+      "amount_minor": 15000000,
+      "currency": "KES",
+      "occurred_at": "2026-05-01T08:00:00Z",
+      "merchant": "Acme Tech",
+      "description": "May Consulting Fee",
+      "category_id": "cat-005",
+      "source": "manual"
+    }
+  ],
+  "notes": [
+    {
+      "id": "note-001",
+      "title": "Project Architecture",
+      "body": "Offline-first with SQLite, SQLCipher, and optional push/pull sync.",
+      "folder": "Work",
+      "is_favorite": true,
+      "tags": ["architecture", "mylifeos"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Review monthly budget",
+      "notes": "Compare planned vs actual spending in categories.",
+      "priority": 2,
+      "due_at": "2026-05-31T18:00:00Z",
+      "completed": false
+    }
+  ]
+}

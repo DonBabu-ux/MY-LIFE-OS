@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgres://mylifeos:mylifeos_secret@postgres:5432/mylifeos
+      - JWT_SECRET=change_this_secret_in_production
+      - LOG_LEVEL=debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/server/src:ro
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=mylifeos
+      - POSTGRES_PASSWORD=mylifeos_secret
+      - POSTGRES_DB=mylifeos
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mylifeos -d mylifeos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
